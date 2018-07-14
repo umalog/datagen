@@ -64,7 +64,7 @@ public class GenerationHelperTest {
     public void getDate() {
         List<LocalDate> list = new ArrayList<>();
         for (int i = 0; i < 200; i++) {
-            list.add(LocalDate.parse(GenerationHelper.getDate()));
+            list.add(LocalDate.parse(GenerationHelper.getDate(false)));
         }
         LocalDate max = LocalDate.of(LocalDate.now().getYear(), 1, 1);
         LocalDate min = LocalDate.of(LocalDate.now().getYear() - 1, 1, 1);

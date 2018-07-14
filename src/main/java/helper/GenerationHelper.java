@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 /**
@@ -82,11 +83,17 @@ public class GenerationHelper {
     /**
      * Генерирует дату в пределах предшествующего года.
      *
+     * @param withTime возвращать "дата-время", вместо "дата"
      * @return строковое представление даты
      */
-    public static String getDate() {
+    public static String getDate(boolean withTime) {
         int lastYear = LocalDate.now().getYear() - 1;
         LocalDate date = LocalDate.of(lastYear, 1, 1);
+        if (withTime) {
+            int x = getRandomInt(date.lengthOfYear() * 24 * 60);
+            LocalDateTime dateTime = LocalDateTime.of(lastYear, 1, 1, 0, 0);
+            return dateTime.plusMinutes(x).toString().replace('T', ' ');
+        }
         int x = getRandomInt(date.lengthOfYear());
         return date.plusDays(x).toString();
     }
@@ -95,7 +102,7 @@ public class GenerationHelper {
      * @return рандомное число в виде строки.
      */
     public static String getPrice() {
-        double price = 10_000.00 + (RANDOM.nextDouble() * (100_000.00 - 10_000.00));
+        double price = 10_000.00 + (RANDOM.nextDouble() * (90_000.00));
         return new DecimalFormat("#0.00").format(price);
     }
 }

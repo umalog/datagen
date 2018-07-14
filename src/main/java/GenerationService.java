@@ -32,7 +32,7 @@ class GenerationService {
         StringBuilder builder = new StringBuilder();
 
         for (int i = 1; i <= eventCounter; i++) {
-            builder.append(GenerationHelper.getDate())
+            builder.append(GenerationHelper.getDate(true))
                     .append("__")
                     .append(offices[GenerationHelper.getRandomInt(offices.length)])
                     .append("__")
