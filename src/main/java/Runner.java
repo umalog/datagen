@@ -14,7 +14,8 @@ public class Runner {
         GenerationService genService;
 
         if (args.length == 0) {
-            LOGGER.info("Не задано аргументов, будет использована конфигурация по умолчанию");
+            LOGGER.info("Не задано аргументов, будет использована конфигурация по умолчанию.\n" +
+                    "Файл с адресами офисов будет сгенерирован самостоятельно.");
             genService = new GenerationService();
         } else if (args.length == 3) {
             genService = new GenerationService(args[0], Integer.valueOf(args[1]), args[2]);
