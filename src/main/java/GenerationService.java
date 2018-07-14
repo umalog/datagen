@@ -27,7 +27,7 @@ class GenerationService {
      * Создает файл "дата-время - номер точки продаж - номер операции - сумма операции"
      *
      */
-    void generate() {
+    public void generate() {
         String[] offices = GenerationHelper.readFile(path);
         StringBuilder builder = new StringBuilder();
 
