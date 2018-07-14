@@ -9,7 +9,7 @@ class GenerationService {
     GenerationService() {
         this.path = GenerationHelper.createTestFile();
         this.eventCounter = GenerationHelper.getRandomInt(90000, 100);
-        this.resultPath = System.getProperty("user.home") + "/Downloads/result.txt";
+        this.resultPath = System.getProperty("user.home") + "/Downloads/operations.txt";
     }
 
     /**
