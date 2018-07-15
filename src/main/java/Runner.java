@@ -1,14 +1,15 @@
 
 import org.apache.log4j.Logger;
 
-/**
- * В параметрах запуска передавать:
- * Путь до файла с офисами, количество операций, путь сохранения результата.
- */
+
 public class Runner {
 
     private static final Logger LOGGER = Logger.getLogger(Runner.class);
 
+    /**
+     * В параметрах запуска передавать:
+     * Путь до файла с офисами, количество операций, путь сохранения результата.
+     */
     public static void main(String[] args) {
 
         GenerationService genService;
@@ -26,7 +27,7 @@ public class Runner {
 
         try {
             genService.generate();
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             LOGGER.error("Не удалось создать файл, очень жаль. ", e);
         }
 
