@@ -22,5 +22,10 @@ public class RunnerTest {
         }catch (RuntimeException e){
             Assert.assertNotEquals("", e.getMessage());
         }
+        try {
+            Runner.main(new String[]{});
+        }catch (RuntimeException e){
+            Assert.assertNotEquals("", e.getMessage());
+        }
     }
 }
