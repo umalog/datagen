@@ -14,12 +14,16 @@ public class Runner {
 
         GenerationService genService;
 
-        if (args.length == 0) {
-            LOGGER.info("Не задано аргументов, будет использована конфигурация по умолчанию.\n" +
-                    "Файл с адресами офисов будет сгенерирован самостоятельно.");
-            genService = new GenerationService();
-        } else if (args.length == 3) {
-            genService = new GenerationService(args[0], Integer.valueOf(args[1]), args[2]);
+        if (args.length == 3) {
+            try{
+                int counter = Integer.parseInt(args[1]);
+                genService = new GenerationService(args[0], counter, args[2]);
+            }catch (NumberFormatException e){
+                LOGGER.error("Ожидается 3 аргумента: файл с адресами, количество генерируемых операций" +
+                        "(арабские цифры) и конечный файл");
+                throw new IllegalArgumentException(e);
+            }
+
         } else {
             LOGGER.error("Ожидается 3 аргумента: файл с адресами, количество генерируемых операций и конечный файл");
             throw new IllegalArgumentException();

@@ -1,52 +1,49 @@
 package helper;
 
-import com.github.javafaker.Faker;
 import org.apache.log4j.Logger;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Locale;
+import java.util.List;
 
 /**
  * Утилитарный класс для работы со списком точек продаж.
  */
 public class GenerationHelper {
     private static final Logger LOGGER = Logger.getLogger(GenerationHelper.class);
-    private static final String DEFAULTPATH = System.getProperty("user.home") + "/Downloads/offices.txt";
     private static final java.util.Random RANDOM = new java.util.Random();
 
-    /**
-     * Создает файл с рандомным количеством рандомных адресов.
-     * Используется при запуске приложения без агрументов.
-     *
-     * @return путь сохранения файла с сгенерированными адресами точек продаж.
-     */
-    public static String createTestFile() {
-        Faker faker = new Faker(Locale.getDefault());
-        int length = getRandomInt(60, 40);
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            builder.append(faker.address().city())
-                    .append(", ")
-                    .append(faker.address().streetAddress())
-                    .append("\n");
+    public static boolean deleteData(String path) {
+        try {
+            return Files.deleteIfExists(Paths.get(path));
+        } catch (IOException e) {
+            LOGGER.error("Неудачная попытка удаления уже существующего файла " + path);
+            throw new RuntimeException(e);
         }
-        faker.date().birthday(3, 4);
-        writeData(DEFAULTPATH, builder.toString());
-        return DEFAULTPATH;
     }
 
     /**
-     * @param path куда писать.
-     * @param data что писать.
+     * @param offices      список офисов для рандомной вставки в записи
+     * @param stream       куда писать
+     * @param eventCounter количество итераций записи
      */
-    public static void writeData(String path, String data) {
-        try {
-            Files.write(Paths.get(path), data.getBytes());
+    public static void writeLines(List<String> offices, OutputStream stream, int eventCounter) {
+        try (BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(stream, StandardCharsets.UTF_8.newEncoder()))) {
+            for (int i = 1; i <= eventCounter; i++) {
+                writer.write(GenerationHelper.getDate(true) + "__");
+                writer.write(offices.get(GenerationHelper.getRandomInt(offices.size())) + "__");
+                writer.write(i + "__");
+                writer.write(GenerationHelper.getPrice());
+                writer.newLine();
+            }
         } catch (IOException e) {
             LOGGER.error("Неудачная попытка создания файла: " + e.getMessage());
             throw new RuntimeException(e);
@@ -55,12 +52,13 @@ public class GenerationHelper {
 
     /**
      * @param fileName путь до файла.
-     * @return массив строк из файла.
+     * @return список строк из файла.
      */
-    public static String[] readFile(String fileName) {
+    public static List<String> readFile(String fileName) {
         try {
-            String allLines = new String(Files.readAllBytes(Paths.get(fileName)));
-            return allLines.split(System.lineSeparator());
+            List<String> result = Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
+            LOGGER.info("Прочитанно " + result.size() + " филиалов из файла " + fileName);
+            return result;
         } catch (IOException e) {
             LOGGER.error("Неудачная попытка чтения файла: " + e.getMessage());
             throw new RuntimeException(e);
@@ -103,6 +101,6 @@ public class GenerationHelper {
      */
     public static String getPrice() {
         double price = 10_000.00 + (RANDOM.nextDouble() * (90_000.00));
-        return new DecimalFormat("#0.00").format(price);
+        return Double.toString(price);
     }
 }

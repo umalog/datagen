@@ -1,21 +1,23 @@
 import helper.GenerationHelper;
+import org.apache.log4j.Logger;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Paths;
+import java.util.List;
 
 class GenerationService {
 
+    private static final Logger LOGGER = Logger.getLogger(GenerationService.class);
     private String path;
     private int eventCounter;
     private String resultPath;
 
-    GenerationService() {
-        this.path = GenerationHelper.createTestFile();
-        this.eventCounter = GenerationHelper.getRandomInt(90000, 100);
-        this.resultPath = System.getProperty("user.home") + "/Downloads/operations.txt";
-    }
-
     /**
-     * @param path файл со списком точек продаж
+     * @param path         файл со списком точек продаж
      * @param eventCounter количество операций
-     * @param resultPath файл для записи результата
+     * @param resultPath   файл для записи результата
      */
     GenerationService(String path, int eventCounter, String resultPath) {
         this.path = path;
@@ -28,19 +30,22 @@ class GenerationService {
      * Офис выбирается рандомно из списка.
      */
     public void generate() {
-        String[] offices = GenerationHelper.readFile(path);
-        StringBuilder builder = new StringBuilder();
+        List<String> offices = GenerationHelper.readFile(path);
 
-        for (int i = 1; i <= eventCounter; i++) {
-            builder.append(GenerationHelper.getDate(true))
-                    .append("__")
-                    .append(offices[GenerationHelper.getRandomInt(offices.length)])
-                    .append("__")
-                    .append(i)
-                    .append("__")
-                    .append(GenerationHelper.getPrice())
-                    .append(System.lineSeparator());
+        if (GenerationHelper.deleteData(resultPath)) {
+            LOGGER.info("Файл " + resultPath + " будет перезаписан");
         }
-        GenerationHelper.writeData(resultPath, builder.toString());
+        OutputStream stream;
+        try {
+            stream = new FileOutputStream(resultPath);
+        } catch (IOException e) {
+            LOGGER.error("Неудачная попытка создания OutputStream: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+        GenerationHelper.writeLines(offices, stream, eventCounter);
+        LOGGER.info("Файл " + Paths.get(resultPath).toAbsolutePath() + " создан. Количество записанных операций: " + eventCounter);
     }
+
+
 }
+
